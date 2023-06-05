@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        .main-page-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Set Up</h1>
+
+<form>
+    <label for="expiration-days">유통기한 임박 기준 :</label>
+    <input type="number" id="expiration-days" min="1" required>
+    <br><br>
+    <button type="button" id="save-button">저장</button>
+    <button type="button" id="signout-button">로그아웃</button>
+</form>
+
+<a href="MainPage.html" class="main-page-button">Main Page</a>
+
+<script>
+    class SetUpPage {
+        constructor() {
+            this.expirationDaysInput = document.getElementById("expiration-days");
+            this.saveButton = document.getElementById("save-button");
+
+            // Retrieve the stored expiration days from localStorage, if available
+            const storedDays = localStorage.getItem("expirationDays");
+            if (storedDays) {
+                this.expirationDaysInput.value = storedDays;
+            }
+
+            this.saveButton.addEventListener("click", () => {
+                this.saveExpirationDays();
+            });
+        }
+
+        saveExpirationDays() {
+            const expirationDays = this.expirationDaysInput.value;
+
+            // Save the expiration days to localStorage
+            localStorage.setItem("expirationDays", expirationDays);
+
+            alert("저장되었습니다.");
+            window.location.href = "MainPage.html";
+        }
+    }
+
+    function handleSignOut() {
+        localStorage.setItem("SignIn", "false");
+        // Perform logout actions here
+        alert("로그아웃 되었습니다.");
+        // Redirect to the login page or any other desired page
+        window.location.href = "SignIn.html";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const setUpPage = new SetUpPage();
+
+        // Event listener for sign out button
+        const signOutButton = document.getElementById("signout-button");
+        signOutButton.addEventListener("click", () => {
+            handleSignOut();
+        });
+    });
+
+</script>
+</body>
+</html>
