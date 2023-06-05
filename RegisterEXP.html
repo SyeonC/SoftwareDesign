@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+</head>
+
+<body>
+  <h1>Registration EXP</h1>
+  <form>
+    <label for="product-name">상품명:</label>
+    <input type="text" id="product-name" required>
+    <br><br>
+    <label for="opening-date">개봉일:</label>
+    <input type="date" id="opening-date" required>
+    <br><br>
+    <label for="expiration-date">유통기한:</label>
+    <input type="date" id="expiration-date" required>
+    <br><br>
+    <label for="additional-info">추가내용:</label>
+    <textarea id="additional-info" rows="4" cols="50"></textarea>
+    <br><br>
+    <button type="button" id="register-button">등록</button>
+    <button type="button" onclick="location.href='MainPage.html'">취소</button>
+  </form>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      class RegistrationForm {
+        constructor() {
+          this.productNameInput = document.getElementById("product-name");
+          this.openingDateInput = document.getElementById("opening-date");
+          this.expirationDateInput = document.getElementById("expiration-date");
+          this.additionalInfoInput = document.getElementById("additional-info");
+          this.registerButton = document.getElementById("register-button");
+        }
+
+        register() {
+          const inputProductName = this.productNameInput.value;
+          const inputOpeningDate = this.openingDateInput.value;
+          const inputExpirationDate = this.expirationDateInput.value;
+          const inputAdditionalInfo = this.additionalInfoInput.value;
+
+          if (inputProductName === "" || inputExpirationDate === "") {
+            alert("제품명, 유통기한은 필수 입력 사항입니다.");
+            return;
+          }
+
+          let formData = JSON.parse(localStorage.getItem("registrationData")) || {};
+
+          if (inputProductName in formData && inputOpeningDate in formData[inputProductName]) {
+            alert("이미 등록한 상품입니다.");
+          } else {
+            formData[inputProductName] = {
+              openingDate: inputOpeningDate,
+              expirationDate: inputExpirationDate,
+              additionalInfo: inputAdditionalInfo
+            };
+
+            localStorage.setItem("registrationData", JSON.stringify(formData));
+
+            alert("제품 등록이 완료되었습니다. 메인 화면으로 이동합니다.");
+            window.location.href = "MainPage.html";
+          }
+        }
+
+        initialize() {
+          this.registerButton.addEventListener("click", this.register.bind(this));
+        }
+      }
+
+      const registrationForm = new RegistrationForm();
+      registrationForm.initialize();
+    });
+  </script>
+</body>
+
+</html>

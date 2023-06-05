@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .main-page-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>View Expired Products</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>상품명</th>
+        <th>개봉일</th>
+        <th>유통기한</th>
+        <th>추가내용</th>
+      </tr>
+    </thead>
+    <tbody id="expired-product-list"></tbody>
+  </table>
+
+  <a href="MainPage.html" class="main-page-button">Main Page</a>
+
+  <script>
+    class ExpiredProductView {
+      constructor() {
+        this.expiredProductList = document.getElementById("expired-product-list");
+        this.products = {};
+
+        // Retrieve the stored product data from localStorage
+        const storedData = localStorage.getItem("registrationData");
+        if (storedData) {
+          this.products = JSON.parse(storedData);
+          this.displayExpiredProducts();
+        } else {
+          const noDataMessage = document.createElement("tr");
+          noDataMessage.innerHTML = "<td colspan='4'>등록된 상품이 없습니다.</td>";
+          this.expiredProductList.appendChild(noDataMessage);
+        }
+      }
+
+      displayExpiredProducts() {
+        const today = new Date();
+
+        for (const productName in this.products) {
+          const product = this.products[productName];
+          const expirationDate = new Date(product.expirationDate);
+
+          if (expirationDate <= today) {
+            const openingDate = product.openingDate;
+            const additionalInfo = product.additionalInfo;
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+          <td>${productName}</td>
+          <td>${openingDate}</td>
+          <td>${expirationDate}</td>
+          <td>${additionalInfo}</td>
+        `;
+            this.expiredProductList.appendChild(row);
+          }
+        }
+
+        if (this.expiredProductList.childElementCount === 0) {
+          const noDataMessage = document.createElement("tr");
+          noDataMessage.innerHTML = "<td colspan='4'>유통기한 마감 상품이 없습니다.</td>";
+          this.expiredProductList.appendChild(noDataMessage);
+        }
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const expiredProductView = new ExpiredProductView();
+    });
+
+  </script>
+</body>
+
+</html>

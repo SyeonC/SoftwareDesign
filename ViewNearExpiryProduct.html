@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .main-page-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Near Expiry Products</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>상품명</th>
+                <th>개봉일</th>
+                <th>유통기한</th>
+                <th>추가내용</th>
+            </tr>
+        </thead>
+        <tbody id="product-list"></tbody>
+    </table>
+
+    <a href="MainPage.html" class="main-page-button">Main Page</a>
+
+    <script>
+        class NearExpiryProductView {
+            constructor() {
+                this.productList = document.getElementById("product-list");
+                this.products = {};
+                this.expirationDays = 0;
+
+                // Retrieve the stored product data and expiration days from localStorage
+                const storedData = localStorage.getItem("registrationData");
+                const storedExpirationDays = localStorage.getItem("expirationDays");
+
+                if (storedData && storedExpirationDays) {
+                    this.products = JSON.parse(storedData);
+                    this.expirationDays = parseInt(storedExpirationDays, 10);
+                    this.displayNearExpiryProducts();
+                } else {
+                    const noDataMessage = document.createElement("tr");
+                    noDataMessage.innerHTML = "<td colspan='4'>등록된 상품이 없습니다.</td>";
+                    this.productList.appendChild(noDataMessage);
+                }
+            }
+
+            displayNearExpiryProducts() {
+                const today = new Date();
+
+                const filteredProducts = Object.entries(this.products).filter(([productName, product]) => {
+                    const expirationDate = new Date(product.expirationDate);
+                    return expirationDate > today;
+                });
+
+                if (filteredProducts.length > 0) {
+                    filteredProducts.forEach(([productName, product]) => {
+                        const openingDate = product.openingDate;
+                        const expirationDate = product.expirationDate;
+                        const additionalInfo = product.additionalInfo;
+
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+          <td>${productName}</td>
+          <td>${openingDate}</td>
+          <td>${expirationDate}</td>
+          <td>${additionalInfo}</td>
+        `;
+                        this.productList.appendChild(row);
+                    });
+                } else {
+                    const noDataMessage = document.createElement("tr");
+                    noDataMessage.innerHTML = "<td colspan='4'>유통기한 임박 상품이 없습니다.</td>";
+                    this.productList.appendChild(noDataMessage);
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const nearExpiryProductView = new NearExpiryProductView();
+        });
+
+    </script>
+</body>
+
+</html>

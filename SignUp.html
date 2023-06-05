@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+</head>
+
+<body>
+  <h1>SignUp</h1>
+  <form>
+    <label for="id">ID:</label>
+    <input type="text" id="id" required>
+    <br><br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" required>
+    <br><br>
+    <label for="verify-password">Password 확인:</label>
+    <input type="password" id="verify-password" required>
+    <br><br>
+    <label for="name">이름:</label>
+    <input type="text" id="name" required>
+    <br><br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" required>
+    <br><br>
+    <button type="button" id="sign-up-button">회원가입</button>
+    <button type="button" onclick="location.href='SignIn.html'">로그인</button>
+  </form>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      class SignUpManager {
+        constructor() {
+          this.idInput = document.getElementById("id");
+          this.passwordInput = document.getElementById("password");
+          this.verifyPasswordInput = document.getElementById("verify-password");
+          this.nameInput = document.getElementById("name");
+          this.emailInput = document.getElementById("email");
+          this.signUpButton = document.getElementById("sign-up-button");
+        }
+
+        signUp() {
+          const inputId = this.idInput.value;
+          const inputPassword = this.passwordInput.value;
+          const inputVerifyPassword = this.verifyPasswordInput.value;
+          const inputName = this.nameInput.value;
+          const inputEmail = this.emailInput.value;
+
+          if (!inputId || !inputPassword || !inputVerifyPassword || !inputName || !inputEmail) {
+            alert("모든 정보를 입력해주세요.");
+            return;
+          }
+
+          if (inputPassword !== inputVerifyPassword) {
+            alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+            return;
+          }
+
+          // Get the existing users from localStorage
+          let users = JSON.parse(localStorage.getItem("users")) || {};
+
+          if (inputId in users) {
+            alert("이미 존재하는 아이디입니다.");
+          } else {
+            users[inputId] = {
+              password: inputPassword,
+              name: inputName,
+              email: inputEmail
+            };
+
+            // Save the updated user data to localStorage
+            localStorage.setItem("users", JSON.stringify(users));
+
+            alert("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
+            window.location.href = "SignIn.html";
+          }
+        }
+
+        initialize() {
+          this.signUpButton.addEventListener("click", this.signUp.bind(this));
+        }
+      }
+
+      const signUpManager = new SignUpManager();
+      signUpManager.initialize();
+    });
+  </script>
+</body>
+
+</html>
